@@ -18,9 +18,81 @@ extern int _p9dir(struct stat*, struct stat*, char*, Dir*, char**, char*);
 #if defined(__linux__)
 static int
 mygetdents(int fd, struct dirent *buf, int n) {
-  return syscall (getdents, fd, (void*) buf, n);
+	return syscall (getdents, fd, (void*) buf, n);
 }
-#elif defined(__APPLE__) || defined(__FreeBSD__)
+#elif defined(__APPLE__)
+#define NDIRFDS 256
+static struct { int fd; DIR *dir; } dirtab[NDIRFDS];
+
+static DIR *
+opendirfd(int fd)
+{
+	int i, dupfd;
+	DIR *d;
+
+	for(i = 0; i < NDIRFDS; i++)
+		if(dirtab[i].dir != NULL && dirtab[i].fd == fd)
+			return dirtab[i].dir;
+	for(i = 0; i < NDIRFDS; i++)
+		if(dirtab[i].dir == NULL){
+			dupfd = dup(fd);
+			if(dupfd < 0)
+				return NULL;
+			d = fdopendir(dupfd);
+			if(d == NULL){
+				close(dupfd);
+				return NULL;
+			}
+			dirtab[i].fd = fd;
+			dirtab[i].dir = d;
+			return d;
+		}
+	return NULL;
+}
+
+static void
+closedirfd(int fd)
+{
+	int i;
+	for(i = 0; i < NDIRFDS; i++)
+		if(dirtab[i].dir != NULL && dirtab[i].fd == fd){
+			closedir(dirtab[i].dir);
+			dirtab[i].dir = NULL;
+			return;
+		}
+}
+
+static int
+mygetdents(int fd, struct dirent *buf, int n)
+{
+	DIR *dir;
+	struct dirent *de;
+	char *p = (char*)buf;
+	int used = 0;
+	long pos;
+
+	dir = opendirfd(fd);
+	if(dir == NULL)
+		return -1;
+
+	for(;;){
+		pos = telldir(dir);
+		de = readdir(dir);
+		if(de == NULL)
+			break;
+		if(used + de->d_reclen > n){
+			seekdir(dir, pos);
+			break;
+		}
+		memcpy(p + used, de, de->d_reclen);
+		used += de->d_reclen;
+	}
+
+	if(de == NULL && used == 0)
+		closedirfd(fd);
+	return used;
+}
+#elif defined(__FreeBSD__)
 static int
 mygetdents(int fd, struct dirent *buf, int n)
 {

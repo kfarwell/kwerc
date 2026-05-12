@@ -33,3 +33,4 @@ clean:
 ${TARG}: ${OFILES}
 	@echo LD ${TARG}
 	@${CC} ${LDFLAGS} -o ${TARG} ${OFILES} -L../lib9 -l9 -lm
+	@chmod 755 ${TARG}
