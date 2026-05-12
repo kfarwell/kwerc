@@ -15,6 +15,10 @@ OBJTYPE     = 386
 CFLAGS      += -c -I. -DPLAN9PORT -DPREFIX="\"${PREFIX}\"" -fcommon
 LDFLAGS     += -static
 
+# Darwin
+#CFLAGS      += -c -I. -DPLAN9PORT -DPREFIX="\"${PREFIX}\"" -fcommon
+#LDFLAGS     =
+
 # Solaris
 #CFLAGS      = -fast -xtarget=ultra -D__sun__ -c -I. -DPREFIX="\"${PREFIX}\""
 #LDFLAGS     = -dn
