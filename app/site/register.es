@@ -4,7 +4,7 @@ if {!~ $REQUEST_METHOD POST} { return 0 }
 if {! only_chars $p_username $allowed_user_chars} {
     throw error 'Invalid username. Allowed characters: [<pre>a-z, A-Z, 0-9, _</pre>]'
 }
-if {test -d db/users/$p_username} {
+if {ls -p db/users | grep -i -s '^'$p_username'$'} {
     throw error 'An account already exists with this username. Please choose another'
 }
 

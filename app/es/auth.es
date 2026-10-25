@@ -13,7 +13,10 @@ fn login_user username password {
 
         # Normalize case-insensitive username/email -> case-sensitive username
         if {~ $username *@*} {
-            username = `{basename `{basename -d `{grep '^'$username'$' db/users/*/email}}}
+            username = `{echo -n $username | awk '
+                NR == FNR { n++; email = tolower($0); next }
+                n == 1 && tolower($0) == email { split(FILENAME, f, "/"); print f[3] }
+            ' - db/users/*/email}
         } {only_chars $username $allowed_user_chars} {
             username = `{ls -p db/users | grep -i '^'$username'$'}
         } {
@@ -21,7 +24,7 @@ fn login_user username password {
         }
 
         # Goodbye
-        if {isempty $username ||
+        if {!~ $#username 1 ||
             !~ `{echo -n $password | kryptgo checkhash -f db/users/$username/password} true} {
             dprint Failed login to $username from $HTTP_USER_AGENT on $REMOTE_ADDR
             throw error 'Wrong username/email or password'
