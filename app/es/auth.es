@@ -22,7 +22,7 @@ fn login_user username password {
 
         # Goodbye
         if {isempty $username ||
-            ! kryptgo checkhash -b `{cat db/users/$username/password} -p $password} {
+            !~ `{echo -n $password | kryptgo checkhash -f db/users/$username/password} true} {
             dprint Failed login to $username from $HTTP_USER_AGENT on $REMOTE_ADDR
             throw error 'Wrong username/email or password'
         }

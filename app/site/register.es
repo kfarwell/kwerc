@@ -16,6 +16,6 @@ if {isempty $p_password ||
 
 # Create user
 mkdir -p db/users/$p_username
-kryptgo genhash -p $p_password > db/users/$p_username/password
+echo -n $p_password | kryptgo genhash > db/users/$p_username/password
 
 login_user $p_username $p_password
