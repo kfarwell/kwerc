@@ -13,7 +13,6 @@ MANPREFIX   := $(PREFIX)/man
 PLAN9       := $(PREFIX)/vendor/9base
 YACC        := $(PREFIX)/vendor/9base/yacc/yacc -S
 EDIT        := null
-GO111MODULE := off
 
 .PHONY: all deps permissions 9base es mawk kryptgo cgd clean
 
@@ -34,7 +33,6 @@ mawk:
 	$(MAKE) -C vendor/mawk install
 
 kryptgo:
-	go get -u golang.org/x/crypto/bcrypt
 	cd vendor/kryptgo && go build -ldflags "$(GO_LDFLAGS)"
 	mkdir -p $(PREFIX)/bin && cp vendor/kryptgo/kryptgo $(PREFIX)/bin/
 
