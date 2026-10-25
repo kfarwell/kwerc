@@ -46,7 +46,7 @@ if {! isempty $QUERY_STRING} {
 }
 
 # Do auth
-if {~ $^p_logout yes || ~ $req_path /logout} {
+if {~ $REQUEST_METHOD POST && ! cross_site && {~ $^p_logout yes || ~ $req_path /logout}} {
     logout_user
 } {
     try login_user

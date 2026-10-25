@@ -15,5 +15,7 @@
 % } {
       <h1>Login</h1>
       <p>You're already logged in!</p>
-      <a href="/logout">Logout</a>
+      <form action="/logout" method="POST">
+          <button type="submit" name="logout" value="yes">Logout</button>
+      </form>
 % }
