@@ -33,8 +33,6 @@ func main() {
 		c = "./" + c
 	}
 
-	os.Setenv("PATH", os.Getenv("PATH")+":.")
-
 	envList := []string{"PATH", "PLAN9"}
 	for _, envVar := range strings.Split(*envVars, ",") {
 		envList = append(envList, envVar)
