@@ -1,5 +1,12 @@
 export
+OS          := $(shell uname -s)
+ifeq ($(OS),Darwin)
+LDFLAGS     :=
+GO_LDFLAGS  :=
+else
 LDFLAGS     := -static
+GO_LDFLAGS  := -extldflags -static
+endif
 OBJTYPE     := x86_64
 PREFIX      := $(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 MANPREFIX   := $(PREFIX)/man
@@ -28,11 +35,11 @@ mawk:
 
 kryptgo:
 	go get -u golang.org/x/crypto/bcrypt
-	cd vendor/kryptgo && go build -ldflags "-extldflags -static"
+	cd vendor/kryptgo && go build -ldflags "$(GO_LDFLAGS)"
 	mkdir -p $(PREFIX)/bin && cp vendor/kryptgo/kryptgo $(PREFIX)/bin/
 
 cgd:
-	cd vendor/cgd && go build -ldflags "-linkmode external -extldflags -static"
+	cd vendor/cgd && go build -ldflags "-linkmode external $(GO_LDFLAGS)"
 	mkdir -p $(PREFIX)/bin && cp vendor/cgd/cgd $(PREFIX)/bin/
 
 permissions:
