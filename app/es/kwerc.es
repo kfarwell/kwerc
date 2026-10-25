@@ -16,7 +16,9 @@ if {test -f config} {
     . config
 }
 
-site = $SERVER_NAME
+if {isempty $site} {
+    site = $SERVER_NAME
+}
 if {~ $HTTPS on} {
     protocol = https
 } {
