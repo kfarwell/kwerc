@@ -22,7 +22,12 @@ if {~ $HTTPS on} {
 } {
     protocol = http
 }
-REMOTE_ADDR = `{echo $REMOTE_ADDR | sed 's/\.[0-9]*\.[0-9]*$//'}^.xxx.xxx # anonymize IPs to first 2 octets
+# Anonymize IPs to first 2 octets/groups
+if {echo $REMOTE_ADDR | grep -s ':'} {
+    REMOTE_ADDR = `{echo $REMOTE_ADDR | sed 's/^([^:]*:[^:]*).*/\1:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/'}
+} {
+    REMOTE_ADDR = `{echo $REMOTE_ADDR | sed 's/\.[0-9]*\.[0-9]*$//'}^.xxx.xxx
+}
 base_url = $protocol://$site
 dateun = `{date -un}
 
