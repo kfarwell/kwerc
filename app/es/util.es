@@ -3,22 +3,22 @@ NEWLINE = '
 
 # Arithmetic
 fn + a b {
-    awk 'BEGIN { printf "%f", '$a' + '$b' }' | sed 's/\.?0*$//'
+    awk -v 'a='$^a -v 'b='$^b 'BEGIN { printf "%f", a + b }' | sed 's/\.?0*$//'
 }
 fn - a b {
-    awk 'BEGIN { printf "%f", '$a' - '$b' }' | sed 's/\.?0*$//'
+    awk -v 'a='$^a -v 'b='$^b 'BEGIN { printf "%f", a - b }' | sed 's/\.?0*$//'
 }
 fn x a b {
-    awk 'BEGIN { printf "%f", '$a' * '$b' }' | sed 's/\.?0*$//'
+    awk -v 'a='$^a -v 'b='$^b 'BEGIN { printf "%f", a * b }' | sed 's/\.?0*$//'
 }
 fn / a b {
-    awk 'BEGIN { printf "%f", '$a' / '$b' }' | sed 's/\.?0*$//'
+    awk -v 'a='$^a -v 'b='$^b 'BEGIN { printf "%f", a / b }' | sed 's/\.?0*$//'
 }
 fn % a b {
-    awk 'BEGIN { printf "%f", '$a' % '$b' }' | sed 's/\.?0*$//'
+    awk -v 'a='$^a -v 'b='$^b 'BEGIN { printf "%f", a % b }' | sed 's/\.?0*$//'
 }
 fn int n {
-    awk 'BEGIN { printf "%.0f", int('$n') }'
+    awk -v 'n='$^n 'BEGIN { printf "%.0f", int(n) }'
 }
 fn ++ v {
     $v = `{+ $$v 1}
@@ -29,16 +29,16 @@ fn -- v {
 
 # Numeric comparisons
 fn lt a b {
-    ~ `{awk 'BEGIN { print ('$a' < '$b') }'} 1
+    ~ `{awk -v 'a='$^a -v 'b='$^b 'BEGIN { print (a + 0 < b + 0) }'} 1
 }
 fn le a b {
-    ~ `{awk 'BEGIN { print ('$a' <= '$b') }'} 1
+    ~ `{awk -v 'a='$^a -v 'b='$^b 'BEGIN { print (a + 0 <= b + 0) }'} 1
 }
 fn gt a b {
-    ~ `{awk 'BEGIN { print ('$a' > '$b') }'} 1
+    ~ `{awk -v 'a='$^a -v 'b='$^b 'BEGIN { print (a + 0 > b + 0) }'} 1
 }
 fn ge a b {
-    ~ `{awk 'BEGIN { print ('$a' >= '$b') }'} 1
+    ~ `{awk -v 'a='$^a -v 'b='$^b 'BEGIN { print (a + 0 >= b + 0) }'} 1
 }
 fn min a b {
     if {lt $a $b} {
@@ -63,7 +63,7 @@ fn isempty var {
 
 # Check if $1 is in $2, space-delimited
 fn in item list {
-    ~ `{awk 'BEGIN { split("'$^list'", array); for (i in array) if (array[i] == "'$item'") print "true" }'} true
+    ~ `{awk -v 'list='$^list -v 'item='$^item 'BEGIN { split(list, array); for (i in array) if (array[i] == item) print "true" }'} true
 }
 
 # Recursively strip string from variable
