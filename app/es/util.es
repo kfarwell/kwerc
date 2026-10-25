@@ -61,6 +61,13 @@ fn isempty var {
     ~ $^var '(empty,list,or,set)' || ~ $^var '(empty array)' || ~ $^var '(empty,array)'
 }
 
+# Check if $str is non-empty and every byte of it is in $chars, a bracket
+# expression body: e.g. only_chars $p_username 'a-zA-Z0-9_'
+fn only_chars str chars {
+    ! isempty $str &&
+    ~ $str `{echo -n $str | awk -v 'rs=[^'$chars']+' 'BEGIN { RS = rs; ORS = "" } { print }'}
+}
+
 # Check if $1 is in $2, space-delimited
 fn in item list {
     ~ `{awk -v 'list='$^list -v 'item='$^item 'BEGIN { split(list, array); for (i in array) if (array[i] == item) print "true" }'} true

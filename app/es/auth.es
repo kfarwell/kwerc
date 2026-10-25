@@ -1,4 +1,4 @@
-allowed_user_chars = '[a-zA-Z0-9_]'
+allowed_user_chars = 'a-zA-Z0-9_'
 
 fn login_user username password {
     if {logged_in} { return 0 }
@@ -14,9 +14,10 @@ fn login_user username password {
         # Normalize case-insensitive username/email -> case-sensitive username
         if {~ $username *@*} {
             username = `{basename `{basename -d `{grep '^'$username'$' db/users/*/email}}}
-        } {
-            username = `{echo $username | grep '^'$allowed_user_chars'+$'}
+        } {only_chars $username $allowed_user_chars} {
             username = `{ls -p db/users | grep -i '^'$username'$'}
+        } {
+            username = ()
         }
 
         # Goodbye
@@ -51,7 +52,7 @@ fn login_user username password {
         sessionid = `{get_cookie id}
 
         # Check if ID is valid, session exists and is not expired
-        if {! echo $sessionid | grep -s '^[a-zA-Z0-9_\-]+$'} {
+        if {! only_chars $sessionid 'a-zA-Z0-9_-'} {
             set_cookie id logout 'Thu, 01 Jan 1970 00:00:00 GMT'
             throw error 'Invalid session. Please log in again'
         }
@@ -87,7 +88,7 @@ fn login_user username password {
 
     # If this was an initial login from /login form, redirect...
     if {! isempty $username && ! isempty $password} {
-        if {echo $q_redirect | grep -s '^[a-zA-Z0-9_/]+$'} {
+        if {only_chars $q_redirect 'a-zA-Z0-9_/'} {
             # ...to the provided ?redirect=/path, if it's safe
             post_redirect $q_redirect
         } {
@@ -100,7 +101,7 @@ fn login_user username password {
 fn logout_user {
     # Delete session, expire cookie, and redirect to /login
     sessionid = `{get_cookie id}
-    if {echo $sessionid | grep -s '^[a-zA-Z0-9_\-]+$' && test -d db/sessions/$sessionid} {
+    if {only_chars $sessionid 'a-zA-Z0-9_-' && test -d db/sessions/$sessionid} {
         rm -r db/sessions/$sessionid
     }
     set_cookie id logout 'Thu, 01 Jan 1970 00:00:00 GMT'

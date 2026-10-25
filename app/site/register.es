@@ -1,7 +1,7 @@
 if {!~ $REQUEST_METHOD POST} { return 0 }
 
 # Validate username, availability
-if {isempty $p_username || ! echo $p_username | grep -s '^'$allowed_user_chars'+$'} {
+if {! only_chars $p_username $allowed_user_chars} {
     throw error 'Invalid username. Allowed characters: [<pre>a-z, A-Z, 0-9, _</pre>]'
 }
 if {test -d db/users/$p_username} {
