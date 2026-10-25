@@ -36,7 +36,7 @@ Features
   compiled Unix command line tools
   ([9base](https://tools.suckless.org/9base/)). Works in a cluster.
   Supports Redis as a primary datastore
-  ([kwerc-redis](https://github.com/kwerc/kwerc-redis).
+  ([kwerc-redis](https://github.com/kfarwell/kwerc-redis).
 * Secure. kwerc has strong protections against shell injections. Es's
   quoting rules and overall sensible syntax avoid security bugs that are
   common in other shells. And of course, there is no better security
@@ -95,13 +95,13 @@ kwerc should now be reachable at http://127.0.0.1:42069. The default
 site comes with basic login/registration and a debug page.
 
 Next up: building an actual web app. Documentation is a work in progress
-at [kwerc.org](https://kwerc.org).
+at [kwerc.kfarwell.org](https://kwerc.kfarwell.org).
 [werc's documentation](http://werc.cat-v.org/) is also somewhat applicable.
 
 Extensions
 ----------
 
-* [kwerc-redis](https://github.com/kwerc/kwerc-redis)
+* [kwerc-redis](https://github.com/kfarwell/kwerc-redis)
 
 Frequently Questioned Answers
 -----------------------------
