@@ -130,7 +130,7 @@ fn cross_site {
     if {! isempty $HTTP_SEC_FETCH_SITE} {
         !~ $HTTP_SEC_FETCH_SITE same-origin none
     } {! isempty $HTTP_ORIGIN} {
-        !~ $HTTP_ORIGIN *://^$site
+        !~ $HTTP_ORIGIN *://^$site *://^$site^:*
     } {
         false
     }
