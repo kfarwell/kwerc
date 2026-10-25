@@ -15,7 +15,13 @@ if {isempty $p_password ||
 }
 
 # Create user
-mkdir -p db/users/$p_username
-echo -n $p_password | kryptgo genhash > db/users/$p_username/password
+mkdir -p db/users
+if {! mkdir db/users/$p_username >[2]/dev/null} {
+    throw error 'An account already exists with this username. Please choose another'
+}
+if {! echo -n $p_password | kryptgo genhash > db/users/$p_username/password} {
+    rm -r db/users/$p_username
+    throw error 'Something went wrong. Please try again later'
+}
 
 login_user $p_username $p_password
