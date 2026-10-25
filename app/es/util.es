@@ -90,13 +90,6 @@ fn os cmd args {
     $kwerc_root/../bin/$cmd $args
 }
 
-# Benchmark command
-fn time cmd {
-    t = `{/usr/bin/date +%s.%N}
-    $cmd
-    echo `{- `{/usr/bin/date +%s.%N} $t}
-}
-
 # date(1) output -> YYYYMMDD format
 # e.g. 'Tue Aug 16 17:03:52 CDT 1977' -> 19770816
 fn yyyymmdd date {

@@ -19,6 +19,14 @@ Location: '^$t^'
 fn perm_redirect url { http_redirect $url '301 Moved Permanantly' }
 fn post_redirect url { http_redirect $url '303 See Other' }
 
+# Byte-wise arg filters: arg_name keeps only [a-zA-Z0-9_], strip_cr deletes CRs
+fn arg_name {
+    awk 'BEGIN { RS = "[^a-zA-Z0-9_]+"; ORS = "" } { print }'
+}
+fn strip_cr {
+    awk 'BEGIN { RS = "\r"; ORS = "" } { print }'
+}
+
 # POST args -> $p_key=value
 # Note: should check if content type is application/x-www-form-urlencoded?
 # Should compare with http://www.shelldorado.com/scripts/cmds/urlgetopt.txt
@@ -26,9 +34,9 @@ fn load_post_args {
     if {~ $REQUEST_METHOD POST && ~ $#post_args 0} {
         for (pair = `` \&\n {cat}) {
             pair = `` '=' {echo -n $pair}
-            n = 'p_'^`{echo $pair(1) | urldecode | /bin/tr -cd 'a-zA-Z0-9_'}
+            n = 'p_'^`{echo $pair(1) | urldecode | arg_name}
             post_args = ($post_args $n)
-            $n = `` () {echo -n $pair(2) | urldecode | /bin/tr -d ''}
+            $n = `` () {echo -n $pair(2) | urldecode | strip_cr}
         }
         pair = ()
     }
@@ -38,9 +46,9 @@ fn load_query_args {
     if {~ $#query_args 0} {
         for (pair = `` \&\n {echo -n $QUERY_STRING}) {
             pair = `` '=' {echo -n $pair}
-            n = 'q_'^`{echo $pair(1) | urldecode | tr -cd 'a-zA-Z0-9_'}
+            n = 'q_'^`{echo $pair(1) | urldecode | arg_name}
             query_args = ($query_args $n)
-            $n = `` () {echo -n $pair(2) | urldecode | tr -d ''}
+            $n = `` () {echo -n $pair(2) | urldecode | strip_cr}
         }
         pair = ()
     }

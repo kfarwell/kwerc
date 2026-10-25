@@ -11,5 +11,5 @@
 %       es -xc $p_command >[2=1] | escape_html
 %   }
     <hr />
-%   /usr/bin/env | escape_html
+%   vars | escape_html
 </pre>
