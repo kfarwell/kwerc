@@ -51,11 +51,17 @@ fn login_user username password {
         sessionid = `{get_cookie id}
 
         # Check if ID is valid, session exists and is not expired
-        if {! echo $sessionid | grep -s '^[a-zA-Z0-9_\-]+$' ||
-            ! test -d db/sessions/$sessionid ||
+        if {! echo $sessionid | grep -s '^[a-zA-Z0-9_\-]+$'} {
+            set_cookie id logout 'Thu, 01 Jan 1970 00:00:00 GMT'
+            throw error 'Invalid session. Please log in again'
+        }
+
+        if {! test -d db/sessions/$sessionid ||
             ge $dateun `{cat db/sessions/$sessionid/expiry} ||
             ge $dateun `{cat db/sessions/$sessionid/expiryabs}} {
-            rm -r db/sessions/$sessionid
+            if {test -d db/sessions/$sessionid} {
+                rm -r db/sessions/$sessionid
+            }
             set_cookie id logout 'Thu, 01 Jan 1970 00:00:00 GMT'
             throw error 'Session expired. Please log in again'
         }
@@ -94,7 +100,7 @@ fn login_user username password {
 fn logout_user {
     # Delete session, expire cookie, and redirect to /login
     sessionid = `{get_cookie id}
-    if {! echo $sessionid | grep -s '^[a-zA-Z0-9_\-]+$'} {
+    if {echo $sessionid | grep -s '^[a-zA-Z0-9_\-]+$' && test -d db/sessions/$sessionid} {
         rm -r db/sessions/$sessionid
     }
     set_cookie id logout 'Thu, 01 Jan 1970 00:00:00 GMT'
