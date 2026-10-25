@@ -70,7 +70,7 @@ fn awk_buffer {
 
 # Decode/encode strings for URLs
 fn urldecode {
-    awk 'BEGIN {printf "'`^{sed 's/\+/ /g; s/\\/\\\\/g; s/"/\\"/g; s/%([0-9a-fA-F][0-9a-fA-F])/\\x\1/g'}^'"}'
+    awk 'BEGIN {printf "%s", "'`^{sed 's/\+/ /g; s/\\/\\\\/g; s/"/\\"/g; s/%([0-9a-fA-F][0-9a-fA-F])/\\x\1/g'}^'"}'
 }
 fn urlencode {
     awk '
