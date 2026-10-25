@@ -21,6 +21,7 @@ all: permissions deps
 deps: 9base es mawk kryptgo cgd
 
 9base:
+	@test ! -f vendor/9base/yacc/yacc || chmod 755 vendor/9base/yacc/yacc
 	$(MAKE) -C vendor/9base LDFLAGS=$(LDFLAGS) OBJTYPE=$(OBJTYPE) PREFIX=$(PREFIX) MANPREFIX=$(MANPREFIX) install
 
 es: 9base
@@ -34,11 +35,11 @@ mawk:
 
 kryptgo:
 	cd vendor/kryptgo && go build -ldflags "$(GO_LDFLAGS)"
-	mkdir -p $(PREFIX)/bin && cp vendor/kryptgo/kryptgo $(PREFIX)/bin/
+	mkdir -p $(PREFIX)/bin && install -m 755 vendor/kryptgo/kryptgo $(PREFIX)/bin/
 
 cgd:
 	cd vendor/cgd && go build -ldflags "-linkmode external $(GO_LDFLAGS)"
-	mkdir -p $(PREFIX)/bin && cp vendor/cgd/cgd $(PREFIX)/bin/
+	mkdir -p $(PREFIX)/bin && install -m 755 vendor/cgd/cgd $(PREFIX)/bin/
 
 permissions:
 	find . $(PREFIX) -type d -exec chmod 2750 {} ';'
