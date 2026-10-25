@@ -120,9 +120,19 @@ fn urlencode {
 # Cookies
 fn set_cookie name val expiry {
     if {isempty $expiry} {
-        echo 'Set-cookie: '^$^name^'='^$^val^'; Path=/; Secure; HttpOnly'
+        echo 'Set-cookie: '^$^name^'='^$^val^'; Path=/; Secure; HttpOnly; SameSite=Lax'
     } {
-        echo 'Set-cookie: '^$^name^'='^$^val^'; Expires='$^expiry'; Path=/; Secure; HttpOnly'
+        echo 'Set-cookie: '^$^name^'='^$^val^'; Expires='$^expiry'; Path=/; Secure; HttpOnly; SameSite=Lax'
+    }
+}
+
+fn cross_site {
+    if {! isempty $HTTP_SEC_FETCH_SITE} {
+        !~ $HTTP_SEC_FETCH_SITE same-origin none
+    } {! isempty $HTTP_ORIGIN} {
+        !~ $HTTP_ORIGIN *://^$site
+    } {
+        false
     }
 }
 fn get_cookie name {
