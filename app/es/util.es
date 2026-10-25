@@ -220,7 +220,7 @@ fn setup_handlers {
 
 # Sanitization
 fn escape_html {
-    sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+    sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/''/\&#39;/g'
 }
 
 fn sanitize_partial_url {
